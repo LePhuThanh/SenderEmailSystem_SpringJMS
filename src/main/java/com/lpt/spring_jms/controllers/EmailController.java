@@ -39,7 +39,7 @@ public class EmailController {
         String originalFileName = Objects.requireNonNull(attachment.getOriginalFilename());
         File attachmentFile = FileHandle.convertMultipartToFile(attachment, originalFileName);
 
-        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
+        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage(); //MIME (Multipurpose Internet Mail Extensions)
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
         mimeMessageHelper.setTo(emailAttachmentDto.getTo());
         mimeMessageHelper.setSubject(emailAttachmentDto.getSubject());
