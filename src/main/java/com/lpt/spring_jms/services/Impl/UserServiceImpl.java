@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private OtpUtil otpUtil;
     @Autowired
@@ -41,7 +40,6 @@ public class UserServiceImpl implements UserService {
         user.setOtpGenerateTime(LocalDateTime.now());
         return userRepository.save(user);
     }
-
     @Override
     public Boolean verifyAccount(String email, String otp) {
         User user = userRepository.findByEmail(email)
@@ -54,7 +52,6 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
     @Override
     public Boolean regenerateOtp(String email) {
         User user = userRepository.findByEmail(email)
@@ -69,9 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setOtpGenerateTime(LocalDateTime.now());
         userRepository.save(user);
         return true;
-//        return "Email send ... sent please verify account within 1 minute";
     }
-
     @Override
     public Boolean login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
@@ -83,6 +78,25 @@ public class UserServiceImpl implements UserService {
             System.out.println("Your account is not verified");
             return false; //Your account is not verified
         }
+        return true;
+    }
+    @Override
+    public Boolean forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        try{
+            emailUtil.sendResetPasswordEmail(email);
+        }catch (MessagingException e){
+            throw new RuntimeException("Unable to send set password email please try again!");
+        }
+        return true;
+    }
+    @Override
+    public Boolean setPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        user.setPassword(newPassword);
+        userRepository.save(user);
         return true;
     }
 }

@@ -54,9 +54,28 @@ public class UserController {
                     new DataResponse("200","Login successfully")
             );
         }
-        throw new RuntimeException("You password is incorrect or your account is not verified!");
+        throw new RuntimeException("You password is incorrect or your account is not verified!"); //
     }
-
+    @PutMapping(value = "/forgot-password")
+    public ResponseEntity<DataResponse> forgotPassword(@RequestParam String email){
+        Boolean isRegenerateOtp = userService.forgotPassword(email);
+        if (isRegenerateOtp){
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new DataResponse("200","Please check your email to set password to your account")
+            );
+        }
+        throw new RuntimeException("There are errors when send email to set to password!"); //
+    }
+    @PutMapping(value = "/set-password")
+    public ResponseEntity<DataResponse> setNwePassword(@RequestParam String email, @RequestHeader String newPassword){
+        Boolean isRegenerateOtp = userService.setPassword(email, newPassword);
+        if (isRegenerateOtp){
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new DataResponse("200","New password set successfully login with new password")
+            );
+        }
+        throw new RuntimeException("There are errors when set new password!"); //
+    }
 }
 
 //https://www.youtube.com/watch?v=kBtgDVzjFzs

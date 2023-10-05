@@ -17,4 +17,8 @@ public interface UserService {
     Boolean regenerateOtp(String email);
 
     Boolean login(LoginDto loginDto);
+
+    Boolean forgotPassword(String email);
+
+    Boolean setPassword(String email, String newPassword);
 }
