@@ -1,6 +1,5 @@
 package com.lpt.spring_jms.dto;
 
-
 import lombok.Getter;
 import lombok.Setter;
 

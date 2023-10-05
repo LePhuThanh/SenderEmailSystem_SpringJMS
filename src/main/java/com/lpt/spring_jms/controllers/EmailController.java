@@ -22,33 +22,38 @@ import java.util.Objects;
 public class EmailController {
     @Autowired
     private JavaMailSender javaMailSender;
+
     @PostMapping("/send-email")
-    public DataResponse sendEmail(@RequestBody EmailDto emailDto){
+    public DataResponse sendEmail(@RequestBody EmailDto emailDto) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(emailDto.getTo());
         simpleMailMessage.setSubject(emailDto.getSubject());
         simpleMailMessage.setText(emailDto.getText());
         javaMailSender.send(simpleMailMessage);
-        return new DataResponse("200","Email send successfully");
+        return new DataResponse("200", "Email send successfully");
     }
+
     @PostMapping("/send-email-attachment")
-    //@ModelAttribute to use link data from request to Java Object or model attribute
-    public DataResponse sendEmailAttachment(@ModelAttribute EmailAttachmentDto emailAttachmentDto) throws MessagingException, IOException {
+    // @ModelAttribute to use link data from request to Java Object or model
+    // attribute
+    public DataResponse sendEmailAttachment(@ModelAttribute EmailAttachmentDto emailAttachmentDto)
+            throws MessagingException, IOException {
 
         MultipartFile attachment = emailAttachmentDto.getAttachment();
         String originalFileName = Objects.requireNonNull(attachment.getOriginalFilename());
         File attachmentFile = FileHandle.convertMultipartToFile(attachment, originalFileName);
 
-        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage(); //MIME (Multipurpose Internet Mail Extensions)
+        MimeMessage mimeMailMessage = javaMailSender.createMimeMessage(); // MIME (Multipurpose Internet Mail
+                                                                          // Extensions)
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
         mimeMessageHelper.setTo(emailAttachmentDto.getTo());
         mimeMessageHelper.setSubject(emailAttachmentDto.getSubject());
-        mimeMessageHelper.setText(emailAttachmentDto.getText(),true);
+        mimeMessageHelper.setText(emailAttachmentDto.getText(), true);
 
         mimeMessageHelper.addAttachment(originalFileName, attachmentFile);
 
         javaMailSender.send(mimeMailMessage);
-        return new DataResponse("200","Email with attachment send successfully");
+        return new DataResponse("200", "Email with attachment send successfully");
     }
 }
 

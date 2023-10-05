@@ -25,11 +25,11 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User register(RegisterDto registerDto)  {
+    public User register(RegisterDto registerDto) {
         String otp = otpUtil.generateOtp();
         try {
             emailUtil.sendOtpEmail(registerDto.getEmail(), otp);
-        } catch (MessagingException e){
+        } catch (MessagingException e) {
             throw new RuntimeException("Unable to send otp please try again!");
         }
         User user = new User();
@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
         user.setOtpGenerateTime(LocalDateTime.now());
         return userRepository.save(user);
     }
+
     @Override
     public Boolean verifyAccount(String email, String otp) {
         User user = userRepository.findByEmail(email)
@@ -52,14 +53,15 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
     @Override
     public Boolean regenerateOtp(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
         String otp = otpUtil.generateOtp();
-        try{
+        try {
             emailUtil.sendOtpEmail(email, otp);
-        }catch (MessagingException e ){
+        } catch (MessagingException e) {
             throw new RuntimeException("Unable to send otp please try again!");
         }
         user.setOtp(otp);
@@ -67,30 +69,33 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return true;
     }
+
     @Override
     public Boolean login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
-        if (!loginDto.getPassword().equals(user.getPassword())){
+        if (!loginDto.getPassword().equals(user.getPassword())) {
             System.out.println("Password is incorrect");
-            return  false; //Password is incorrect
-        }else if (!user.isActive()){
+            return false; // Password is incorrect
+        } else if (!user.isActive()) {
             System.out.println("Your account is not verified");
-            return false; //Your account is not verified
+            return false; // Your account is not verified
         }
         return true;
     }
+
     @Override
     public Boolean forgotPassword(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
-        try{
+        try {
             emailUtil.sendResetPasswordEmail(email);
-        }catch (MessagingException e){
+        } catch (MessagingException e) {
             throw new RuntimeException("Unable to send set password email please try again!");
         }
         return true;
     }
+
     @Override
     public Boolean setPassword(String email, String newPassword) {
         User user = userRepository.findByEmail(email)

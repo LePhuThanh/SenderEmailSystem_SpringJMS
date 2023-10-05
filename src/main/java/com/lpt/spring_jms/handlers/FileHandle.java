@@ -9,8 +9,8 @@ import java.io.IOException;
 
 @Component
 public class FileHandle {
-    public static File convertMultipartToFile (MultipartFile multipartFile, String fileName) throws IOException {
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName); //temporary folder of Java
+    public static File convertMultipartToFile(MultipartFile multipartFile, String fileName) throws IOException {
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName); // temporary folder of Java
         multipartFile.transferTo(convFile);
         return convFile;
     }
